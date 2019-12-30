@@ -9,8 +9,11 @@ class PredictPipeline:
 		0: 'Apple Red 1', 1: 'Apple Red Yellow 2', 2: 'Avocado', 3: 'Banana', 4: 'Blueberry', 5: 'Cactus fruit', 6: 'Cherry Wax Black', 7: 'Clementine', 8: 'Cocos', 9: 'Grape Blue', 10: 'Grape White', 11: 'Kiwi', 12: 'Lemon', 13: 'Limes', 14: 'Mango', 15: 'Nectarine', 16: 'Orange', 17: 'Peach', 18: 'Pear', 19: 'Pineapple', 20: 'Plum', 21: 'Strawberry'
 	}
 
-	def __init__(self, model_path, img_path):
-		self.model = models.load_model(model_path)
+	def __init__(self, json_model_path, model_weights_path, img_path):
+		with open(json_model_path, "r") as json_file:
+			loaded_model_json = json_file.read()
+		self.model = models.model_from_json(loaded_model_json)
+		self.model.load_weights(model_weights_path)
 		self.img_path = img_path
 		
 	def image_process(self):
@@ -27,7 +30,9 @@ class PredictPipeline:
 
 
 if __name__ == "__main__":
-	pipeline = PredictPipeline(model_path='MM_model_2.h5', img_path='test_banana.jpg')
+	pipeline = PredictPipeline(
+		json_model_path='model.json', model_weights_path='model_weights.h5',img_path='test_banana.jpg'
+	)
 	prediction = pipeline.image_class_predict()
 	print(prediction)
 
